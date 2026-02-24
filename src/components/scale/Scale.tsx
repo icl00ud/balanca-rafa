@@ -14,29 +14,27 @@ interface ScaleProps {
 
 export function Scale({ italyFactors, brazilFactors, italyTotal, brazilTotal, rotationDeg, onRemove }: ScaleProps) {
   const italyPan = (
-    <ScalePan
-      side="italy"
-      factors={italyFactors}
-      total={italyTotal}
-      rotationDeg={rotationDeg}
-      onRemove={onRemove}
-    />
+    <ScalePan side="italy" factors={italyFactors} total={italyTotal} rotationDeg={rotationDeg} onRemove={onRemove} />
   )
 
   const brazilPan = (
-    <ScalePan
-      side="brazil"
-      factors={brazilFactors}
-      total={brazilTotal}
-      rotationDeg={rotationDeg}
-      onRemove={onRemove}
-    />
+    <ScalePan side="brazil" factors={brazilFactors} total={brazilTotal} rotationDeg={rotationDeg} onRemove={onRemove} />
   )
 
   return (
-    <div className="flex flex-col items-center gap-0 overflow-x-auto">
-      <ScaleBeam rotationDeg={rotationDeg} leftSlot={italyPan} rightSlot={brazilPan} />
-      <ScalePillar />
+    <div className="relative">
+      {/* Pillar — absolutely positioned behind the beam, capital aligned to pivot */}
+      <div
+        className="absolute z-0 left-1/2"
+        style={{ top: 4, transform: 'translateX(-50%)' }}
+      >
+        <ScalePillar />
+      </div>
+
+      {/* Beam (includes chains + pans) — sits on top of pillar */}
+      <div className="relative z-10">
+        <ScaleBeam rotationDeg={rotationDeg} leftSlot={italyPan} rightSlot={brazilPan} />
+      </div>
     </div>
   )
 }

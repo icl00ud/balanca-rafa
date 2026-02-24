@@ -7,9 +7,10 @@ interface FactorCardProps {
   factor: Factor
   onRemove?: (id: string) => void
   isDragOverlay?: boolean
+  compact?: boolean
 }
 
-export function FactorCard({ factor, onRemove, isDragOverlay = false }: FactorCardProps) {
+export function FactorCard({ factor, onRemove, isDragOverlay = false, compact = false }: FactorCardProps) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: factor.id,
   })
@@ -19,23 +20,35 @@ export function FactorCard({ factor, onRemove, isDragOverlay = false }: FactorCa
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className={`flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-3 py-2 shadow-sm cursor-grab active:cursor-grabbing select-none transition-opacity ${
-        isDragging && !isDragOverlay ? 'opacity-30' : 'opacity-100'
-      }`}
+      className={`
+        group flex items-center gap-2 rounded-lg border select-none
+        transition-all duration-200 ease-out
+        bg-white
+        border-clinical-300/50
+        shadow-clinical
+        cursor-grab active:cursor-grabbing
+        hover:shadow-clinical-md hover:border-steel-300/50 hover:-translate-y-px
+        ${compact ? 'px-2 py-1.5' : 'px-3 py-2'}
+        ${isDragging && !isDragOverlay ? 'opacity-20 scale-95' : 'opacity-100'}
+        ${isDragOverlay ? 'shadow-clinical-lg ring-2 ring-accent-400/30 rotate-2' : ''}
+      `}
     >
-      <span className="flex-1 text-sm font-medium text-stone-700 truncate">{factor.name}</span>
+      <span className={`flex-1 font-body font-medium text-slate-700 truncate ${compact ? 'text-xs' : 'text-sm'}`}>
+        {factor.name}
+      </span>
       <WeightBadge weight={factor.weight} />
       {onRemove && (
         <button
-          onPointerDown={e => e.stopPropagation()}
-          onClick={e => {
+          type="button"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
             e.stopPropagation()
             onRemove(factor.id)
           }}
-          className="ml-1 rounded p-0.5 text-stone-400 hover:bg-stone-100 hover:text-stone-600 transition-colors"
+          className="ml-0.5 rounded-full p-0.5 text-slate-300 opacity-0 group-hover:opacity-100 hover:bg-clinical-200 hover:text-slate-600 transition-all"
           aria-label="Remover"
         >
-          <X size={14} />
+          <X size={compact ? 12 : 14} />
         </button>
       )}
     </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { Factor, PanSide, ScaleState } from '../types/scale.types'
 
 const STORAGE_KEY = 'decisao_balanca'
@@ -30,18 +30,18 @@ export function useScaleState() {
   const rotationDeg = clamp(-30, (brazilTotal - italyTotal) * 2.5, 30)
 
   function addFactor(factor: Factor) {
-    setState(prev => ({ ...prev, bank: [...prev.bank, factor] }))
+    setState((prev) => ({ ...prev, bank: [...prev.bank, factor] }))
   }
 
   function moveFactor(id: string, destination: PanSide | 'bank') {
-    setState(prev => {
+    setState((prev) => {
       const allFactors = [...prev.bank, ...prev.italy, ...prev.brazil]
-      const factor = allFactors.find(f => f.id === id)
+      const factor = allFactors.find((f) => f.id === id)
       if (!factor) return prev
 
-      const bank = prev.bank.filter(f => f.id !== id)
-      const italy = prev.italy.filter(f => f.id !== id)
-      const brazil = prev.brazil.filter(f => f.id !== id)
+      const bank = prev.bank.filter((f) => f.id !== id)
+      const italy = prev.italy.filter((f) => f.id !== id)
+      const brazil = prev.brazil.filter((f) => f.id !== id)
 
       if (destination === 'bank') return { bank: [...bank, factor], italy, brazil }
       if (destination === 'italy') return { bank, italy: [...italy, factor], brazil }
@@ -50,10 +50,10 @@ export function useScaleState() {
   }
 
   function removeFactor(id: string) {
-    setState(prev => ({
-      bank: prev.bank.filter(f => f.id !== id),
-      italy: prev.italy.filter(f => f.id !== id),
-      brazil: prev.brazil.filter(f => f.id !== id),
+    setState((prev) => ({
+      bank: prev.bank.filter((f) => f.id !== id),
+      italy: prev.italy.filter((f) => f.id !== id),
+      brazil: prev.brazil.filter((f) => f.id !== id),
     }))
   }
 

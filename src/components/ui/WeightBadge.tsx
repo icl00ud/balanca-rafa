@@ -2,15 +2,17 @@ interface WeightBadgeProps {
   weight: number
 }
 
-function badgeColor(weight: number) {
-  if (weight <= 3) return 'bg-stone-200 text-stone-700'
-  if (weight <= 6) return 'bg-amber-200 text-amber-800'
-  return 'bg-red-200 text-red-800'
+function badgeStyle(weight: number): string {
+  if (weight <= 3) return 'bg-clinical-200 text-slate-500 border-clinical-400'
+  if (weight <= 6) return 'bg-steel-100 text-steel-800 border-steel-300'
+  return 'bg-accent-300/20 text-accent-500 border-accent-300'
 }
 
 export function WeightBadge({ weight }: WeightBadgeProps) {
   return (
-    <span className={`inline-flex items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold ${badgeColor(weight)}`}>
+    <span
+      className={`inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-[10px] font-bold tracking-wide font-display tabular-nums ${badgeStyle(weight)}`}
+    >
       {weight}
     </span>
   )

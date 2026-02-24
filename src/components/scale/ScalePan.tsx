@@ -1,6 +1,4 @@
 import { useDroppable } from '@dnd-kit/core'
-import { useSpring, motion } from 'framer-motion'
-import { useEffect } from 'react'
 import type { Factor, PanSide } from '../../types/scale.types'
 import { FactorCard } from '../ui/FactorCard'
 
@@ -12,54 +10,82 @@ interface ScalePanProps {
   onRemove: (id: string) => void
 }
 
-const config: Record<PanSide, { label: string; flag: string; bg: string; border: string; ring: string }> = {
+const config: Record<
+  PanSide,
+  {
+    label: string
+    flag: string
+    bgFrom: string
+    bgTo: string
+    border: string
+    ringActive: string
+    accent: string
+  }
+> = {
   italy: {
-    label: 'Itália',
+    label: 'Italia',
     flag: '🇮🇹',
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    ring: 'ring-2 ring-blue-400',
+    bgFrom: 'from-italy-50',
+    bgTo: 'to-white',
+    border: 'border-italy-200/60',
+    ringActive: 'ring-2 ring-italy-400/60 shadow-[0_0_20px_rgba(59,122,191,0.12)]',
+    accent: 'text-italy-700',
   },
   brazil: {
     label: 'Brasil',
     flag: '🇧🇷',
-    bg: 'bg-green-50',
-    border: 'border-green-300',
-    ring: 'ring-2 ring-green-500',
+    bgFrom: 'from-brazil-50',
+    bgTo: 'to-white',
+    border: 'border-brazil-200/60',
+    ringActive: 'ring-2 ring-brazil-500/60 shadow-[0_0_20px_rgba(58,160,106,0.12)]',
+    accent: 'text-brazil-700',
   },
 }
 
+
 export function ScalePan({ side, factors, total, rotationDeg, onRemove }: ScalePanProps) {
   const { setNodeRef, isOver } = useDroppable({ id: side })
-  const { label, flag, bg, border, ring } = config[side]
-
-  const counterRotate = useSpring(-rotationDeg, { stiffness: 100, damping: 15 })
-
-  useEffect(() => {
-    counterRotate.set(-rotationDeg)
-  }, [rotationDeg, counterRotate])
+  const c = config[side]
 
   return (
-    <motion.div
+    <div
       ref={setNodeRef}
-      style={{ rotate: counterRotate }}
-      className={`flex flex-col gap-1 rounded-xl border-2 p-2 min-w-[160px] max-w-[220px] min-h-[100px] transition-shadow ${bg} ${border} ${isOver ? ring : ''}`}
+      style={{
+        transform: `rotate(${-rotationDeg}deg)`,
+        transition: 'transform 0.5s ease-out',
+      }}
+      className={`
+        flex flex-col rounded-2xl border-2 min-w-[190px] max-w-[210px]
+        transition-all duration-300
+        bg-gradient-to-b ${c.bgFrom} ${c.bgTo}
+        ${c.border}
+        ${isOver ? c.ringActive : 'shadow-clinical-md'}
+      `}
     >
-      <div className="flex items-center justify-between px-1 mb-1">
-        <span className="text-sm font-semibold text-stone-600">
-          {flag} {label}
+      {/* Header */}
+      <div className="flex items-center justify-between px-3 pt-2.5 pb-1">
+        <span className={`text-sm font-display font-600 ${c.accent}`}>
+          {c.flag} {c.label}
         </span>
-        <span className="text-xs font-bold text-stone-500">Σ {total}</span>
+        <span className="text-[10px] font-display font-700 text-steel-700 bg-steel-50 rounded-full px-2 py-0.5 tabular-nums">
+          Σ {total}
+        </span>
       </div>
-      {factors.length === 0 ? (
-        <p className="text-xs text-stone-300 text-center py-3">Solte aqui</p>
-      ) : (
-        <div className="flex flex-col gap-1">
-          {factors.map(factor => (
-            <FactorCard key={factor.id} factor={factor} onRemove={onRemove} />
-          ))}
-        </div>
-      )}
-    </motion.div>
+
+      {/* Cards area */}
+      <div className="px-2 pb-1 min-h-[52px]">
+        {factors.length === 0 ? (
+          <p className="text-[11px] font-body italic text-slate-300 text-center py-3">Solte aqui</p>
+        ) : (
+          <div className="flex flex-col gap-1">
+            {factors.map((factor) => (
+              <FactorCard key={factor.id} factor={factor} onRemove={onRemove} compact />
+            ))}
+          </div>
+        )}
+      </div>
+
+
+    </div>
   )
 }
